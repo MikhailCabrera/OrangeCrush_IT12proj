@@ -150,7 +150,7 @@
         @elseif(auth()->user()?->isAdmin())<span class="logo-badge">Admin</span>@endif
     </a>
     <nav class="sidebar-nav">
-        @if(auth()->user()?->isAdmin() || auth()->user()?->isSuperAdmin())
+        @if(auth()->user()?->isEmployee())
         @php
             $pendingVerificationsCount = \App\Models\User::where('verification_status', 'pending')->count();
             $pendingBookingsCount = \App\Models\Booking::whereIn('status', [
@@ -224,12 +224,14 @@
         <a href="{{ route('admin.users.index') }}?tab=customers" class="nav-link {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.guests.*') ? 'active' : '' }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>User Management
         </a>
+        @if(!auth()->user()?->isStaff())
         <a href="{{ route('admin.discounts.index') }}" class="nav-link {{ request()->routeIs('admin.discounts.*') ? 'active' : '' }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Discounts
         </a>
         <a href="{{ route('admin.reports.index') }}" class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports
         </a>
+        @endif
 
         @if(auth()->user()?->isSuperAdmin())
         <a href="{{ route('admin.logs.index') }}" class="nav-link {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">

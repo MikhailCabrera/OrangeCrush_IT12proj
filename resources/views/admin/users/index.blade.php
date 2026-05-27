@@ -27,11 +27,13 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
         Walk-in Customers <span class="count-pill">{{ $walkins->total() }}</span>
     </a>
+    @if(!auth()->user()?->isStaff())
     <a href="{{ route('admin.users.index') }}?tab=employees{{ request('search') ? '&search='.request('search') : '' }}"
        class="tab-btn {{ $tab === 'employees' ? 'active' : '' }}">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
         Employees <span class="count-pill">{{ $employees->total() }}</span>
     </a>
+    @endif
 </div>
 
 {{-- Search Bar --}}
@@ -88,13 +90,15 @@
                 <td>
                     <div class="flex" style="gap:6px">
                         <a href="{{ route('admin.users.customers.show', $c) }}" class="btn btn-ghost btn-sm">View</a>
-                        @if($c->status === 'active')
-                        <button class="btn btn-danger btn-sm" onclick="openSuspendModal({{ $c->id }}, '{{ addslashes($c->first_name) }} {{ addslashes($c->last_name) }}')">Suspend</button>
-                        @else
-                        <form method="POST" action="{{ route('admin.users.customers.activate', $c) }}">
-                            @csrf @method('PUT')
-                            <button class="btn btn-success btn-sm">Activate</button>
-                        </form>
+                        @if(!auth()->user()?->isStaff())
+                            @if($c->status === 'active')
+                            <button class="btn btn-danger btn-sm" onclick="openSuspendModal({{ $c->id }}, '{{ addslashes($c->first_name) }} {{ addslashes($c->last_name) }}')">Suspend</button>
+                            @else
+                            <form method="POST" action="{{ route('admin.users.customers.activate', $c) }}">
+                                @csrf @method('PUT')
+                                <button class="btn btn-success btn-sm">Activate</button>
+                            </form>
+                            @endif
                         @endif
                     </div>
                 </td>

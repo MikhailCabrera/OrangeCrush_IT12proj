@@ -95,7 +95,7 @@ Route::middleware(['auth', 'role:customer|admin|super_admin'])->group(function (
 });
 
 // ─── Admin Routes ─────────────────────────────────────────────────────────────
-Route::middleware(['auth', 'role:admin|super_admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin|super_admin|staff'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dispatch', [\App\Http\Controllers\Admin\DispatchCalendarController::class, 'index'])->name('dispatch.index');
     Route::get('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');

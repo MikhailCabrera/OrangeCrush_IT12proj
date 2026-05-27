@@ -112,4 +112,14 @@ class User extends Authenticatable
     {
         return $this->hasRole('customer');
     }
+
+    public function isStaff(): bool
+    {
+        return $this->hasRole('staff');
+    }
+
+    public function isEmployee(): bool
+    {
+        return $this->hasRole(['admin', 'super_admin', 'staff']);
+    }
 }

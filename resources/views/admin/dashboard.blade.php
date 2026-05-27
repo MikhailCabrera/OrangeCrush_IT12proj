@@ -47,14 +47,17 @@
         Returns Due Today
         <span class="qa-badge">{{ $quickCounts['returns_today'] }}</span>
     </a>
+    @if(!auth()->user()?->isStaff())
     <a href="{{ route('admin.users.index') }}?tab=employees" class="qa-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         Manage Employees
     </a>
+    @endif
 </div>
 
 {{-- Stat Cards --}}
 <div class="stat-grid">
+    @if(!auth()->user()?->isStaff())
     <div class="stat-card" style="border-color:rgba(255,107,0,.2);background:rgba(255,107,0,.05)">
         <div class="stat-icon" style="background:rgba(255,107,0,.15)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff8c3a" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -69,6 +72,7 @@
         <div class="stat-label">Revenue This Month</div>
         <div class="stat-value" style="color:var(--green)">₱{{ number_format($stats['revenue_this_month'],0) }}</div>
     </div>
+    @endif
     <div class="stat-card">
         <div class="stat-icon" style="background:rgba(59,130,246,.1)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M3 13l1.5-4.5A3 3 0 0 1 7.35 6h9.3a3 3 0 0 1 2.85 2.5L21 13"/><path d="M5 16h14"/><circle cx="7.5" cy="15.5" r="1.5"/><circle cx="16.5" cy="15.5" r="1.5"/></svg>
@@ -117,10 +121,12 @@
 
 {{-- Charts --}}
 <div class="charts-grid">
+    @if(!auth()->user()?->isStaff())
     <div class="card">
         <div class="card-header"><span class="card-title">Revenue (Last 6 Months)</span></div>
         <div class="card-body chart-container"><canvas id="revenueChart" height="280"></canvas></div>
     </div>
+    @endif
     <div class="card">
         <div class="card-header"><span class="card-title">Bookings by Status</span></div>
         <div class="card-body chart-container"><canvas id="bookingChart" height="280"></canvas></div>

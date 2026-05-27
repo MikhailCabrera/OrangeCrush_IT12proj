@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Backend Test Cases</title>
+<style>
+    body { font-family: Arial, sans-serif; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #000; padding: 8px; text-align: left; vertical-align: top; }
+    th { background-color: #e2a0b1; font-weight: bold; } /* Using a shade similar to the user's reference image */
+</style>
+</head>
+<body>
+
+<h2>OrangeCrush System - Functional Backend Test Cases</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>BackEnd Test Case-ID</th>
+            <th>Title</th>
+            <th>Preconditions</th>
+            <th>Test Steps</th>
+            <th>Test Data</th>
+            <th>Expected Results</th>
+            <th>Actual Results</th>
+            <th>Status</th>
+            <th>Bug ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>BTC001</strong></td>
+            <td>Create Customer Profile (Register)</td>
+            <td>1. System is running.<br>2. Valid email does not exist in <code>users</code> table.</td>
+            <td>1. POST <code>/register</code><br>2. Send registration data.<br>3. Verify DB creation.</td>
+            <td>{"first_name": "Juan", "last_name": "Dela Cruz", "email": "juan@example.com", "password": "password123"}</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>Response:</strong> User created, redirected.<br><strong>DB:</strong> Record created in users table.</td>
+            <td>Status: Request successful.<br>Response: Profile created successfully.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC002</strong></td>
+            <td>Customer Duplicate Email Validation</td>
+            <td>1. System is running.<br>2. User with "test@email.com" already exists.</td>
+            <td>1. POST <code>/register</code><br>2. Submit form with existing email.<br>3. Verify validation error.</td>
+            <td>{"first_name": "Maria", "email": "test@email.com", "password": "password123"}</td>
+            <td><strong>Status:</strong> 422 Unprocessable Entity.<br><strong>Response:</strong> "The email has already been taken."<br><strong>DB:</strong> No new record created.</td>
+            <td>Status: 422 error.<br>Response: Validation blocked request.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC003</strong></td>
+            <td>Customer Access Admin Function</td>
+            <td>1. Customer is authenticated.<br>2. Customer lacks admin role.</td>
+            <td>1. GET <code>/admin/dashboard</code><br>2. Verify middleware blocks entry.</td>
+            <td>Standard user session token</td>
+            <td><strong>Status:</strong> 403 Forbidden or Redirect.<br><strong>Response:</strong> Redirects to homepage/error.</td>
+            <td>System blocks access, redirects to dashboard.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC004</strong></td>
+            <td>Create Online Booking</td>
+            <td>1. Customer authenticated.<br>2. Vehicle ID 5 is "available" on requested dates.</td>
+            <td>1. POST <code>/customer/bookings/store</code><br>2. Submit booking payload.</td>
+            <td>{"vehicle_id": 5, "start_date": "2026-06-01", "end_date": "2026-06-03"}</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>Response:</strong> Booking created.<br><strong>DB:</strong> Bookings table updated (Status: Pending).</td>
+            <td>Status: Request successful.<br>DB: Booking pending state created.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC005</strong></td>
+            <td>Admin Approves Booking</td>
+            <td>1. Admin authenticated.<br>2. Booking ID 10 exists and is "pending".</td>
+            <td>1. PUT <code>/admin/bookings/10/approve</code><br>2. Select "Approve" action.</td>
+            <td>booking_id: 10</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>Response:</strong> Confirmation message.<br><strong>DB:</strong> `bookings` status updated to confirmed.</td>
+            <td>Status: Request successful.<br>Response: State updated to confirmed.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC006</strong></td>
+            <td>Mark Vehicle as Maintenance</td>
+            <td>1. Admin authenticated.<br>2. Vehicle ID 6 exists in Fleet.</td>
+            <td>1. PUT <code>/admin/vehicles/6/maintenance</code><br>2. Submit maintenance logs.</td>
+            <td>{"status": "maintenance", "description": "Oil Change"}</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>DB:</strong> `vehicles` table status changed, `maintenance_logs` entry recorded.</td>
+            <td>Status: Request successful.<br>DB: Vehicle status changed, log created.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC007</strong></td>
+            <td>Process Gcash Payment</td>
+            <td>1. Customer authenticated.<br>2. Booking ID 12 requires payment.</td>
+            <td>1. POST <code>/customer/payments/store</code><br>2. Upload receipt image & details.</td>
+            <td>{"booking_id": 12, "payment_method": "gcash", "amount": "1500"}</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>Response:</strong> Payment logged.<br><strong>DB:</strong> `payments` entry created (Status: Pending).</td>
+            <td>Status: Request successful.<br>DB: Record created in payments table.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><strong>BTC008</strong></td>
+            <td>Create Guest Profile (Walk-in)</td>
+            <td>1. Admin authenticated.<br>2. Walk-in customer does not have an account.</td>
+            <td>1. POST <code>/admin/guests/store</code><br>2. Submit walk-in details.</td>
+            <td>{"first_name": "Leni", "last_name": "Robredo", "phone": "09171234567"}</td>
+            <td><strong>Status:</strong> Request successful.<br><strong>DB:</strong> `guest_profiles` table record created.</td>
+            <td>Status: Request successful.<br>DB: Record created in guest_profiles.</td>
+            <td>Passed</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
